@@ -1,0 +1,27 @@
+= form_for(@user) do |f|
+  - if @user.errors.any?
+    #error_explanation
+      %h2
+        = pluralize(@user.errors.count, "error")
+        prohibited this user from being saved:
+      %ul
+        - @user.errors.full_messages.each do |message|
+          %li= message
+  .form-group
+    = f.label :beeminder_token
+    = f.text_field :beeminder_token, class: 'form-control'
+  .actions
+    = f.submit class: 'btn btn-primary'
+
+%hr
+
+%h1
+  Existing Integrations:
+= render "/goal_integrations/current_integrations"
+
+
+  
+.well.margined
+  %h2
+    Add a new goal integration
+  = render '/goal_integrations/form'

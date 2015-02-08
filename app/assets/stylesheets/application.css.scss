@@ -1,0 +1,18 @@
+/*= require_self */
+/*= require devise_bootstrap_views */
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+
+.user-edit-block {
+  margin: 40px 0 0; 
+  border-radius: 4px;
+  background: $gray-lighter;
+  padding: 20px 10px;
+}
+
+.dev-info-block {
+  margin: 30px 0 0;
+}
+
+.margined { margin-top: 30px; }

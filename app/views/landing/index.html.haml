@@ -1,0 +1,28 @@
+%h1
+  Strava Beeminder Integration
+  %small
+    #{link_to "view code on GitHub", "https://github.com/sethherr/strava-beeminder"}
+
+%hr
+
+%h4
+  Setting up the integration
+%ol
+  %li
+    = link_to "Sign in with Strava", user_omniauth_authorize_path(:strava), class: 'navbar-link'
+    (link also in the header)
+  %li
+    Add a Beeminder goal for something - like "run a 5 miles every day"
+  %li
+    Add 
+    - if current_user.present?
+      = link_to "your Beeminder access token", edit_user_url(current_user)
+    - else
+      your Beeminder access token
+    %br
+    %small
+      Not using Beeminder OAuth, just the token found in <em>your account</em> > <em>advanced settings</em>
+  %li
+    Add a goal integration
+  
+= render "user_info" if current_user.present?

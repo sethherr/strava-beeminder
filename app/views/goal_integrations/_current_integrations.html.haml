@@ -1,0 +1,23 @@
+%table.table.table-striped.table-bordered
+  %thead
+    %tr
+      %th
+        Goal
+      %th
+        Activity
+      %th
+        Data
+      %th
+        &nbsp;
+  %tbody
+    - current_user.goal_integrations.each do |goal_integration|
+      %tr
+        %td
+          = goal_integration.goal_title
+        %td
+          = goal_integration.activity_type
+        %td
+          = goal_integration.matching_activities
+        %td
+          = link_to 'Edit', edit_goal_integration_path(goal_integration), class: 'btn btn-primary'
+          = link_to 'Destroy', goal_integration, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'

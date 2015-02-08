@@ -1,0 +1,27 @@
+%h2
+  Existing integrations:
+= render "/goal_integrations/current_integrations"
+.user-edit-block
+  - unless current_user.beeminder_token.present?
+    = link_to "Add your Beeminder access token!", edit_user_url(current_user), class: 'btn btn-primary'
+  .clearfix
+    = link_to "Add a goal integration", edit_user_url(current_user), class: 'btn btn-success pull-right'
+
+   
+
+.dev-info-block
+  %hr
+  %h3
+    Strava user info
+  %pre
+    = current_user.strava_info
+  %pre
+    = current_user.omniauth_hash['extra'].to_h
+
+  %hr
+  %h3
+    Access tokens
+  %pre
+    Strava access token: #{current_user.strava_token}
+  %pre
+    Beeminder access token: #{current_user.beeminder_token}
