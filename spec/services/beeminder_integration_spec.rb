@@ -36,7 +36,7 @@ describe BeeminderIntegration do
       user = User.new(beeminder_token: ENV['BEEMINDER_ACCESS_TOKEN'] )
       integration = BeeminderIntegration.new(user: user)
       slug = integration.goal_slug(ENV['SAMPLE_BEEMINDER_GOAL_TITLE'])
-      pp slug
+      # pp slug
       expect(slug).to eq('run')
     end
   end

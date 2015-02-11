@@ -1,3 +1,9 @@
+# Rake task in scheduler is run every hour. 
+# To set initial datapoints, the goal integrations create controller after save has this:
+# BeeminderIntegration.new({goal_integration: @goal_integration, start: (Time.now - 1.years)}).update_activity_for_goal_integration
+# 
+# I made this too clever by half
+
 class BeeminderIntegration
   include ActionView::Helpers::TextHelper
   def initialize(opts={})
@@ -8,7 +14,7 @@ class BeeminderIntegration
     else
       @user = opts[:user]
     end
-    @after_i = opts[:start] && opts[:start].to_i || (Time.now.beginning_of_day).to_i
+    @after_i = opts[:start] && opts[:start].to_i || (Time.now - 1.weeks).to_i
     @client = beeminder_client if @user.beeminder_token.present?
   end
 
@@ -29,7 +35,6 @@ class BeeminderIntegration
     goal.first.slug
   end
 
-
   def get_activity
     raise StandardError, "Not instantiated with goal integration!" unless @goal_integration.present?
     strava = StravaIntegration.new({goal_integration: @goal_integration, start: @after_i})
@@ -48,6 +53,7 @@ class BeeminderIntegration
       point = Beeminder::Datapoint.new :value => activity[:distance], :comment => msg
       goal.add point
     end
+    update_activity_for_goal_integration(activities)
   end
 
   def update_activity_for_goal_integration(activity=get_activity)
