@@ -19,5 +19,6 @@
         %td
           = goal_integration.matching_activities
         %td
-          = link_to 'Edit', edit_goal_integration_path(goal_integration), class: 'btn btn-primary'
-          = link_to 'Destroy', goal_integration, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'
+          / Commenting out edit - it's possible to change something and have the integration ping beeminder a whole bunch.
+          / # = link_to 'Edit', edit_goal_integration_path(goal_integration), class: 'btn btn-primary'
+          = link_to 'Delete', goal_integration, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'

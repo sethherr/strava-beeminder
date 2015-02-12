@@ -6,25 +6,15 @@ class StravaIntegration
         InlineSkate Workout Kayaking Yoga )
   end
 
-  def self.known_units
-    {
-      miles: 0.000621371192237334,
-      kilometers: 0.001,
-      feet: 3.2808333333
-    }
-  end
-
   def initialize(opts={})
     if opts[:goal_integration]
       @goal_integration = opts[:goal_integration]
       @user = @goal_integration.user
-      @unit = @goal_integration.unit.to_sym
     else
       @user = opts[:user]      
-      @unit = opts[:unit] && opts[:unit].to_sym || self.class.known_units.keys.first
     end
     @client = strava_client if @user.strava_token.present?
-    @after_i = opts[:start] && opts[:start].to_i || (Time.now.beginning_of_day).to_i
+    @after_i = opts[:start] && opts[:start].to_i || (Time.now - 1.weeks).to_i
   end
 
   def strava_client 
@@ -41,24 +31,21 @@ class StravaIntegration
     activities.select { |a| a['type'].match(activity_type) }
   end
 
-  def distance(distance_in_m)
-    distance_in_m * (self.class.known_units[@unit])
-  end
-
-  def goal_integration_format(activities, h={})
-    activities.each do |activity| 
-      h[activity['id']] = {
-        distance: distance(activity['distance']),
-        time: Time.parse(activity['start_date']).to_i,
-        name: activity['name']
-      }
-    end
-    h
+  def output_format(activity)
+    {
+      distance_in_m: activity['distance'],
+      time: Time.parse(activity['start_date']).to_i,
+      name: activity['name'],
+      uri: "strava.com/activities/#{activity['id']}"
+    }
   end
 
   def activities_for_goal_integration
     raise StandardError, "Not instantiated with goal integration!" unless @goal_integration.present?
-    goal_integration_format(activities_matching(@goal_integration.activity_type))
+    activities = activities_matching(@goal_integration.activity_type)
+    h = {}
+    activities.each { |activity|  h[activity['id']] = output_format(activity) }
+    h
   end
 
 end

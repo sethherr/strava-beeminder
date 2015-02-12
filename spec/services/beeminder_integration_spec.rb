@@ -50,5 +50,13 @@ describe BeeminderIntegration do
     end
   end
 
+  describe 'convert' do 
+    it "should convert distance" do 
+      user = User.new
+      integration = BeeminderIntegration.new({user: user, unit: 'feet'})
+      expect(integration.distance(1)).to eq(3.2808333333)
+    end
+  end
+
 
 end

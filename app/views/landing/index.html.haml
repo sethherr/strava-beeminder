@@ -23,6 +23,15 @@
     %small
       Not using Beeminder OAuth, just the token found in <em>your account</em> > <em>advanced settings</em>
   %li
-    Add a goal integration
-  
-= render "user_info" if current_user.present?
+    Add a 
+    - if current_user.present?
+      = link_to "goal integration", edit_user_url(current_user)
+    - else
+      goal integration
+
+- if current_user.present?
+  - if current_user.goal_integrations.present?
+    - current_user.goal_integrations.each do |integration|
+      = render partial:  "/goal_integrations/integration_display", locals: { goal_integration: integration }
+  - else
+    = render "user_info" 

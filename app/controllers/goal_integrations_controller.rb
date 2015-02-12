@@ -9,7 +9,7 @@ class GoalIntegrationsController < ApplicationController
     @goal_integration.user_id = current_user.id 
     if @goal_integration.save
       BeeminderIntegration.new({goal_integration: @goal_integration}).update_activity_for_goal_integration
-      redirect_to edit_user_url(current_user), notice: 'Goal integration created.'
+      redirect_to root_url, notice: 'Goal integration created.'
     else
       render :new
     end

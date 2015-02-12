@@ -1,0 +1,28 @@
+%h3
+  = goal_integration.goal_title
+  %small
+    = goal_integration.activity_type
+- bee_int = BeeminderIntegration.new({goal_integration: goal_integration})
+%table.table.table-striped.table-bordered
+  %thead
+    %tr
+      %th
+        When
+      %th
+        What
+      %th
+        Distance
+      %th
+        link
+  %tbody
+    - goal_integration.matching_activities.keys.each do |key|
+      - activity = goal_integration.matching_activities[key]
+      %tr
+        %td
+          = l Time.at(activity[:time]), format: :detailed
+        %td
+          = activity[:name]
+        %td
+          = bee_int.distance_round(activity[:distance_in_m])
+        %td
+          = link_to key, activity[:uri]

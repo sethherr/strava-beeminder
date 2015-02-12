@@ -13,6 +13,7 @@ class BeeminderIntegration
       @unit = @goal_integration.unit.to_sym
     else
       @user = opts[:user]
+      @unit = opts[:unit] && opts[:unit].to_sym || self.class.known_units.keys.first
     end
     @after_i = opts[:start] && opts[:start].to_i || (Time.now - 1.weeks).to_i
     @client = beeminder_client if @user.beeminder_token.present?
@@ -20,6 +21,22 @@ class BeeminderIntegration
 
   def beeminder_client
     Beeminder::User.new(@user.beeminder_token)
+  end
+
+  def self.known_units
+    {
+      miles: 0.000621371192237334,
+      kilometers: 0.001,
+      feet: 3.2808333333
+    }
+  end
+
+  def distance(distance_in_m)
+    distance_in_m * (self.class.known_units[@unit])
+  end
+
+  def distance_round(distance_in_m)
+    distance(distance_in_m).round(1)
   end
 
   def get_goals
@@ -41,6 +58,11 @@ class BeeminderIntegration
     strava.activities_for_goal_integration
   end
 
+  def message_from_strava_output(activity)
+    # msg = "#{activity[:name]} (#{@goal_integration.activity_type} #{pluralize(activity[:distance], @unit.to_s)})"
+    "#{activity[:name]} #{activity[:uri]}"
+  end
+
   def post_new_activity_to_beeminder
     activities = get_activity
     unposted = activities.keys - @goal_integration.activity_keys
@@ -48,11 +70,10 @@ class BeeminderIntegration
     unposted.each do |k|
       activity = activities[k]
       goal = @client.goal "#{goal_slug(@goal_integration.goal_title)}"
-      # msg = "#{activity[:name]} (#{@goal_integration.activity_type} #{pluralize(activity[:distance], @unit.to_s)})"
-      msg = "#{activity[:name]} (#{pluralize(activity[:distance], @unit.to_s)})"
-      point = Beeminder::Datapoint.new :value => activity[:distance], :comment => msg
+      point = Beeminder::Datapoint.new :value => distance_round(activity[:distance_in_m]), :comment => message_from_strava_output(activity)
       goal.add point
     end
+    activities = activities.merge(@goal_integration.matching_activities) if @goal_integration.matching_activities
     update_activity_for_goal_integration(activities)
   end
 

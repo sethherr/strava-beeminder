@@ -28,14 +28,6 @@ describe StravaIntegration do
     end
   end
 
-  describe :distance do 
-    it "should convert distance" do 
-      user = User.new(strava_token: ENV['STRAVA_ACCESS_TOKEN'] )
-      integration = StravaIntegration.new({user: user, unit: 'feet'})
-      expect(integration.distance(1)).to eq(3.2808333333)
-    end
-  end
-
   describe :activities_for_goal_integration do 
     it "should set the activity hash" do 
       user = create_user
@@ -44,7 +36,7 @@ describe StravaIntegration do
       formatted_activities = integration.activities_for_goal_integration
       expect(formatted_activities.keys.count).to be > 5
       formatted_activity = formatted_activities[formatted_activities.keys.first]
-      expect(formatted_activity.keys).to eq([:distance, :time, :name])
+      expect(formatted_activity.keys).to eq([:distance_in_m, :time, :name, :uri])
     end
   end
 
