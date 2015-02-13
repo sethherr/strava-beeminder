@@ -22,9 +22,9 @@ describe StravaIntegration do
     it "should get activities matching type" do 
       user = User.new(strava_token: ENV['STRAVA_ACCESS_TOKEN'] )
       start = Time.now - 1.years # So that we have enough activity ;)
-      integration = StravaIntegration.new({user: user, start: start})
+      integration = StravaIntegration.new({user: user})
       activities = integration.activities_matching(' run')
-      expect(activities.count).to be > 5
+      expect(activities.count).to be > 4
     end
   end
 
@@ -32,11 +32,11 @@ describe StravaIntegration do
     it "should set the activity hash" do 
       user = create_user
       goal_integration = create_goal_integration(user)
-      integration = StravaIntegration.new({goal_integration: goal_integration, start: (Time.now - 1.years)})
+      goal_integration.update_attribute :created_at, Time.now - 1.week
+      integration = StravaIntegration.new({goal_integration: goal_integration})
       formatted_activities = integration.activities_for_goal_integration
-      expect(formatted_activities.keys.count).to be > 5
-      formatted_activity = formatted_activities[formatted_activities.keys.first]
-      expect(formatted_activity.keys).to eq([:distance_in_m, :time, :name, :uri])
+      expect(formatted_activities.count).to be > 4
+      expect(formatted_activities.first.keys).to eq([:id, :distance_in_m, :time, :name, :uri])
     end
   end
 

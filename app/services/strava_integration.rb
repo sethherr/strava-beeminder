@@ -14,7 +14,7 @@ class StravaIntegration
       @user = opts[:user]      
     end
     @client = strava_client if @user.strava_token.present?
-    @after_i = opts[:start] && opts[:start].to_i || (Time.now - 1.weeks).to_i
+    @after_i = @goal_integration && @goal_integration.created_at.to_i || (Time.now - 1.weeks).to_i
   end
 
   def strava_client 
@@ -33,6 +33,7 @@ class StravaIntegration
 
   def output_format(activity)
     {
+      id: activity['id'],
       distance_in_m: activity['distance'],
       time: Time.parse(activity['start_date']).to_i,
       name: activity['name'],
@@ -43,9 +44,7 @@ class StravaIntegration
   def activities_for_goal_integration
     raise StandardError, "Not instantiated with goal integration!" unless @goal_integration.present?
     activities = activities_matching(@goal_integration.activity_type)
-    h = {}
-    activities.each { |activity|  h[activity['id']] = output_format(activity) }
-    h
+    activities.map { |activity|  output_format(activity) }
   end
 
 end

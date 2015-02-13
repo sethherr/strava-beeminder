@@ -1,7 +1,4 @@
 # Rake task in scheduler is run every hour. 
-# To set initial datapoints, the goal integrations create controller after save has this:
-# BeeminderIntegration.new({goal_integration: @goal_integration, start: (Time.now - 1.years)}).update_activity_for_goal_integration
-# 
 # I made this too clever by half
 
 class BeeminderIntegration
@@ -15,7 +12,6 @@ class BeeminderIntegration
       @user = opts[:user]
       @unit = opts[:unit] && opts[:unit].to_sym || self.class.known_units.keys.first
     end
-    @after_i = opts[:start] && opts[:start].to_i || (Time.now - 1.weeks).to_i
     @client = beeminder_client if @user.beeminder_token.present?
   end
 
@@ -54,7 +50,7 @@ class BeeminderIntegration
 
   def get_activity
     raise StandardError, "Not instantiated with goal integration!" unless @goal_integration.present?
-    strava = StravaIntegration.new({goal_integration: @goal_integration, start: @after_i})
+    strava = StravaIntegration.new({goal_integration: @goal_integration})
     strava.activities_for_goal_integration
   end
 
@@ -63,17 +59,25 @@ class BeeminderIntegration
     "#{activity[:name]} #{activity[:uri]}"
   end
 
+  def set_goal
+    @goal = @client.goal "#{goal_slug(@goal_integration.goal_title)}"
+  end
+
+  def get_goal_comments
+    @goal ||= set_goal
+    datapoints = @goal.datapoints
+    datapoints.map(&:comment)
+  end
+
   def post_new_activity_to_beeminder
     activities = get_activity
-    unposted = activities.keys - @goal_integration.activity_keys
-    return true unless unposted.any?
-    unposted.each do |k|
-      activity = activities[k]
-      goal = @client.goal "#{goal_slug(@goal_integration.goal_title)}"
+    datapoints = get_goal_comments
+    activities.each do |activity|
+      posted = datapoints.select { |d| d.match(activity[:uri]) }
+      next if posted.present?
       point = Beeminder::Datapoint.new :value => distance_round(activity[:distance_in_m]), :comment => message_from_strava_output(activity)
-      goal.add point
+      @goal.add point
     end
-    activities = activities.merge(@goal_integration.matching_activities) if @goal_integration.matching_activities
     update_activity_for_goal_integration(activities)
   end
 
