@@ -28,7 +28,7 @@ describe BeeminderIntegration do
       integration = BeeminderIntegration.new({goal_integration: goal_integration})
       integration.update_activity_for_goal_integration
       goal_integration.reload
-      expect(goal_integration.matching_activities.count).to be > 3
+      expect(goal_integration.matching_activities.count).to be >= 2
     end
   end
 
@@ -42,6 +42,14 @@ describe BeeminderIntegration do
       comments = integration.get_goal_comments
       posted = comments.select { |d| d.match(ENV['SAMPLE_STRAVA_URI']) }
       expect(posted).to be_present
+    end
+
+    it "doesn't ruin everything if someone puts a goal they don't have in" do 
+      user = create_user
+      goal_integration = create_goal_integration(user)
+      goal_integration.update_attribute :goal_title, 'for fucks sake put a functioning title in you dofus'
+      integration = BeeminderIntegration.new({goal_integration: goal_integration})
+      expect { integration.set_goal }.to raise_error
     end
   end
 

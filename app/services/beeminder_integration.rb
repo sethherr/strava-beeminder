@@ -45,6 +45,7 @@ class BeeminderIntegration
 
   def goal_slug(title)
     goal = get_goals.select{ |g| g.title.match(title) }
+    raise StandardError, "Does not have a matching goal!" unless goal.first.present?
     goal.first.slug
   end
 
