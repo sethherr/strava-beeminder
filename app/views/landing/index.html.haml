@@ -1,37 +1,64 @@
-%h1
-  Strava Beeminder Integration
-  %small
-    #{link_to "view code on GitHub", "https://github.com/sethherr/strava-beeminder"}
+.clearfix
+  = image_tag "logo.png", class: 'large-logo'
+  %h1
+    Strava Beeminder Integration
+    %small
+      #{link_to "view code on GitHub", "https://github.com/sethherr/strava-beeminder"}
 
 %hr
+  
+.panel.panel-default
+  .panel-heading
+    %h4
+      Setting up the integration
+  .panel-body
+    - if @user && @user.goal_integrations.present?
+      %h4
+        You've successfully created a goal and an integration. You can obviously add more, but you're good to go right now.
+      %hr
+    %ol
+      %li
+        - if @user.present?
+          %strong
+            Done (You're signed in).
+          Sign in with Strava
+        - else
+          = link_to "Sign in with Strava", user_omniauth_authorize_path(:strava), class: 'navbar-link'
+          (link also in the header)
+      %li
+        - if @user && @user.beeminder_token.present?
+          %strong
+            Done (You've added your beeminder token).
+        Add 
+        - if @user.present?
+          
+          = link_to "your Beeminder access token", edit_user_url(@user)
 
-%h4
-  Setting up the integration
-%ol
-  %li
-    = link_to "Sign in with Strava", user_omniauth_authorize_path(:strava), class: 'navbar-link'
-    (link also in the header)
-  %li
-    Add a Beeminder goal for something - like "run a 5 miles every day"
-  %li
-    Add 
-    - if current_user.present?
-      = link_to "your Beeminder access token", edit_user_url(current_user)
-    - else
-      your Beeminder access token
-    %br
-    %small
-      Not using Beeminder OAuth, just the token found in <em>your account</em> > <em>advanced settings</em>
-  %li
-    Add a 
-    - if current_user.present?
-      = link_to "goal integration", edit_user_url(current_user)
-    - else
-      goal integration
+        - else
+          your Beeminder access token
+        %br
+        %small
+          Not using Beeminder OAuth, just the token found in <em>your account</em> > <em>advanced settings</em>
+      %li
+        - if @user && @user.goal_integrations.present?
+          %strong
+            Done (You have started tracking a goal).
+        Add a goal on Beeminder for something you can track in Strava - like "run 5 miles every day"
+      %li
+        - if @user && @user.goal_integrations.present?
+          %strong
+            Done (You have a goal integration).
+        Add a 
+        - if @user.present?
+          = link_to "goal integration", edit_user_url(@user)
+        - else
+          goal integration
 
-- if current_user.present?
-  - if current_user.goal_integrations.present?
-    - current_user.goal_integrations.each do |integration|
-      = render partial:  "/goal_integrations/integration_display", locals: { goal_integration: integration }
-  - else
-    = render "user_info" 
+- if @user.present?
+
+  - if @user.goal_integrations.present?
+    - if @user.goal_integrations.present?
+      - @user.goal_integrations.each do |integration|
+        = render partial:  "/goal_integrations/integration_display", locals: { goal_integration: integration }
+    - else
+      = render "user_info" 

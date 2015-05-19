@@ -5,7 +5,7 @@
 You can view the live app at [https://strava-beeminder.herokuapp.com](https://strava-beeminder.herokuapp.com). It's deployed to Heroku for free, so it's pretty slow. It runs `rake update_goal_integrations` every hour, which pings beeminder with any new strava information.
 
 
-Uses gems for [Beeminder](https://github.com/beeminder/beeminder-gem) and [Strava](https://github.com/jaredholdcroft/strava-api-v3).
+Uses the [Beeminder gem](https://github.com/beeminder/beeminder-gem) and [Strava gem](https://github.com/jaredholdcroft/strava-api-v3).
 
 It uses Strava's OAuth but requires manually entering a Beeminder token. Srys.
 

@@ -2,9 +2,10 @@
 %html
   %head
     %title Strava Beeminder
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
-    = javascript_include_tag 'application', 'data-turbolinks-track' => true
+    = stylesheet_link_tag    'application'
+    = javascript_include_tag 'application'
     = csrf_meta_tags
+    %link{:href => "/fav.ico", :rel => "shortcut icon"}
   %body
     %nav.navbar.navbar-default
       .container-fluid
@@ -15,7 +16,7 @@
             %span.icon-bar
             %span.icon-bar
             %span.icon-bar
-          %a.navbar-brand{ href: root_url}
+          %a.navbar-brand{ href: root_url }
             Strava Beeminder
         .collapse.navbar-collapse#headernav
           - if current_user.present?

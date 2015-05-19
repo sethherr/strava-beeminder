@@ -15,8 +15,7 @@
       %th
         link
   %tbody
-    - goal_integration.matching_activities.keys.each do |key|
-      - activity = goal_integration.matching_activities[key]
+    - goal_integration.matching_activities.reverse.each do |activity|
       %tr
         %td
           = l Time.at(activity[:time]), format: :detailed
@@ -25,4 +24,4 @@
         %td
           = bee_int.distance_round(activity[:distance_in_m])
         %td
-          = link_to key, activity[:uri]
+          = link_to activity[:id], "https://#{activity[:uri]}"
