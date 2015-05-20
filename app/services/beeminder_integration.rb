@@ -74,16 +74,13 @@ class BeeminderIntegration
     activities = get_activity
     datapoints = get_goal_comments
     activities.each do |activity|
+      pp activity
       posted = datapoints.select { |d| d.match(activity[:uri]) }
       next if posted.present?
-      point = Beeminder::Datapoint.new :value => distance_round(activity[:distance_in_m]), :comment => message_from_strava_output(activity)
+      point = Beeminder::Datapoint.new(value: distance_round(activity[:distance_in_m]),
+        comment: message_from_strava_output(activity))
       @goal.add point
     end
-    update_activity_for_goal_integration(activities)
-  end
-
-  def update_activity_for_goal_integration(activity=get_activity)
-    @goal_integration.update_attribute :matching_activities, activity
   end
 
 end

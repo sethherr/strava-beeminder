@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.1.9'
+gem 'rails', '4.1.10'
 # Use postgresql as the database for Active Record
 gem 'pg'
 # Use SCSS for stylesheets
@@ -52,7 +52,7 @@ group :development, :test do
   gem 'foreman'
   gem 'rerun'
   gem 'vcr'
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 2.14.1'
   gem 'factory_girl_rails'
   gem 'shoulda-matchers'
   gem 'pry'

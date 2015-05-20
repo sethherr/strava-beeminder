@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150208203527) do
+ActiveRecord::Schema.define(version: 20150522160011) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(version: 20150208203527) do
     t.string   "activity_type"
     t.text     "matching_activities"
     t.string   "unit"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "strava_activities", force: true do |t|
+    t.integer  "user_id"
+    t.string   "strava_id"
+    t.json     "data"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -7,7 +7,7 @@ describe BeeminderIntegration do
       user = User.new(beeminder_token: ENV['BEEMINDER_ACCESS_TOKEN'] )
       integration = BeeminderIntegration.new(user: user)
       titles = integration.goal_titles
-      expect(titles.include?(ENV['SAMPLE_BEEMINDER_GOAL_TITLE'])).to be_truthy
+      expect(titles.include?(ENV['SAMPLE_BEEMINDER_GOAL_TITLE'])).to be_true
     end
   end
 
@@ -24,11 +24,9 @@ describe BeeminderIntegration do
     it "gets strava activity" do
       user = create_user
       goal_integration = create_goal_integration(user)
-      goal_integration.update_attribute :created_at, Time.now - 1.week
       integration = BeeminderIntegration.new({goal_integration: goal_integration})
-      integration.update_activity_for_goal_integration
-      goal_integration.reload
-      expect(goal_integration.matching_activities.count).to be >= 2
+      expect_any_instance_of(StravaIntegration).to receive(:activities_for_goal_integration)
+      integration.get_activity
     end
   end
 
@@ -63,12 +61,12 @@ describe BeeminderIntegration do
     end
   end
 
-  describe :get_activity do 
+  describe :post_new_activity_to_beeminder do 
     it "gets strava activity and posts" do
       user = create_user
       goal_integration = create_goal_integration(user)
       integration = BeeminderIntegration.new({goal_integration: goal_integration})
-      expect(integration.post_new_activity_to_beeminder).to be_truthy
+      expect(integration.post_new_activity_to_beeminder).to be_true
     end
   end
 

@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
 
   serialize :omniauth_hash
   has_many :goal_integrations
+  has_many :beeminder_points, through: :goal_integrations
+  has_many :strava_activities
 
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
@@ -14,6 +16,11 @@ class User < ActiveRecord::Base
       user.omniauth_hash = auth.to_h
       user.strava_token = strava_access_token(auth.to_h)
     end
+  end
+
+  def update_strava_credentials(auth)
+    new_token = auth.to_h['credentials']['token']
+    self.update_attribute :strava_token, new_token unless new_token == strava_token
   end
 
   def display_name

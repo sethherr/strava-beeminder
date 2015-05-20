@@ -1,6 +1,8 @@
 class GoalIntegration < ActiveRecord::Base
   belongs_to :user
   serialize :matching_activities
+  has_many :strava_activities
+  has_many :beeminder_points
 
   validates_presence_of :user_id, :unit, :activity_type, :goal_title
 

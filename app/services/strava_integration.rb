@@ -25,26 +25,20 @@ class StravaIntegration
     @client.list_athlete_activities(after: @after_i)
   end
 
-  def activities_matching(activity_type)
-    activity_type = activity_type.strip.gsub(/\s/, '_').camelize
-    activities = get_activities
-    activities.select { |a| a['type'].match(activity_type) }
+  def store_activities
+    get_activities.each { |a| StravaActivity.create_or_update(@user.id, a) }
   end
 
-  def output_format(activity)
-    {
-      id: activity['id'],
-      distance_in_m: activity['distance'],
-      time: Time.parse(activity['start_date']).to_i,
-      name: activity['name'],
-      uri: "strava.com/activities/#{activity['id']}"
-    }
+  def activities_matching(activity_type)
+    activity_type = activity_type.strip.gsub(/\s/, '_').camelize
+    store_activities
+    @user.reload
+    @user.strava_activities.matching_activity_type(activity_type)
   end
 
   def activities_for_goal_integration
     raise StandardError, "Not instantiated with goal integration!" unless @goal_integration.present?
-    activities = activities_matching(@goal_integration.activity_type)
-    activities.map { |activity|  output_format(activity) }
+    activities_matching(@goal_integration.activity_type)
   end
 
 end

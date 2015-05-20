@@ -11,32 +11,31 @@ describe StravaIntegration do
 
   describe :get_activities do 
     it "should get today's activities" do 
-      user = User.new(strava_token: ENV['STRAVA_ACCESS_TOKEN'] )
+      user = FactoryGirl.create(:user, strava_token: ENV['STRAVA_ACCESS_TOKEN'] )
       integration = StravaIntegration.new(user: user)
       activities = integration.get_activities
-      expect(activities.kind_of?(Array)).to be_truthy
+      expect(activities.kind_of?(Array)).to be_true
+    end
+  end
+
+  describe :store_activities do 
+    it "should store activities" do
+      user = FactoryGirl.create(:user, strava_token: ENV['STRAVA_ACCESS_TOKEN'] )
+      integration = StravaIntegration.new(user: user)
+      integration.store_activities
+      user.reload
+      expect(user.strava_activities.count).to be > 2
+      expect(user.strava_activities.first.data['type']).to match('Ride')
     end
   end
 
   describe :activities_matching do 
     it "should get activities matching type" do 
-      user = User.new(strava_token: ENV['STRAVA_ACCESS_TOKEN'] )
+      user = FactoryGirl.create(:user, strava_token: ENV['STRAVA_ACCESS_TOKEN'] )
       start = Time.now - 1.years # So that we have enough activity ;)
       integration = StravaIntegration.new({user: user})
       activities = integration.activities_matching(' run')
-      expect(activities.count).to be > 4
-    end
-  end
-
-  describe :activities_for_goal_integration do 
-    it "should set the activity hash" do 
-      user = create_user
-      goal_integration = create_goal_integration(user)
-      goal_integration.update_attribute :created_at, Time.now - 1.week
-      integration = StravaIntegration.new({goal_integration: goal_integration})
-      formatted_activities = integration.activities_for_goal_integration
-      expect(formatted_activities.count).to be > 4
-      expect(formatted_activities.first.keys).to eq([:id, :distance_in_m, :time, :name, :uri])
+      expect(activities.count).to be >= 1
     end
   end
 
