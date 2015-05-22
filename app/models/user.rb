@@ -6,7 +6,6 @@ class User < ActiveRecord::Base
 
   serialize :omniauth_hash
   has_many :goal_integrations
-  has_many :beeminder_points, through: :goal_integrations
   has_many :strava_activities
 
   def self.from_omniauth(auth)

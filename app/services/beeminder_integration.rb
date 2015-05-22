@@ -55,11 +55,6 @@ class BeeminderIntegration
     strava.activities_for_goal_integration
   end
 
-  def message_from_strava_output(activity)
-    # msg = "#{activity[:name]} (#{@goal_integration.activity_type} #{pluralize(activity[:distance], @unit.to_s)})"
-    "#{activity[:name]} #{activity[:uri]}"
-  end
-
   def set_goal
     @goal = @client.goal "#{goal_slug(@goal_integration.goal_title)}"
   end
@@ -74,11 +69,10 @@ class BeeminderIntegration
     activities = get_activity
     datapoints = get_goal_comments
     activities.each do |activity|
-      pp activity
       posted = datapoints.select { |d| d.match(activity[:uri]) }
       next if posted.present?
       point = Beeminder::Datapoint.new(value: distance_round(activity[:distance_in_m]),
-        comment: message_from_strava_output(activity))
+        comment: activity.message)
       @goal.add point
     end
   end

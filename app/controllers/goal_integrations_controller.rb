@@ -8,7 +8,8 @@ class GoalIntegrationsController < ApplicationController
     @goal_integration = GoalIntegration.new(goal_integration_params)
     @goal_integration.user_id = current_user.id 
     if @goal_integration.save
-      BeeminderIntegration.new({goal_integration: @goal_integration}).get_activity
+      @goal_integration.get_activity
+      @user.reload
       redirect_to root_url, notice: 'Goal integration created.'
     else
       render :new

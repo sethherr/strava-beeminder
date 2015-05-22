@@ -15,13 +15,13 @@
       %th
         link
   %tbody
-    - goal_integration.matching_activities.reverse.each do |activity|
+    - current_user.strava_activities.matching_activity_type(goal_integration.activity_type).each do |activity|
       %tr
         %td
-          = l Time.at(activity[:time]), format: :detailed
+          = l activity.activity_time, format: :detailed
         %td
-          = activity[:name]
+          = activity.name
         %td
-          = bee_int.distance_round(activity[:distance_in_m])
+          = bee_int.distance_round(activity.data['distance'])
         %td
           = link_to activity[:id], "https://#{activity[:uri]}"
