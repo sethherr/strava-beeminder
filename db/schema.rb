@@ -11,10 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150522160011) do
+ActiveRecord::Schema.define(version: 20150523130353) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "goal_integration_strava_activities", force: true do |t|
+    t.integer  "strava_activity_id"
+    t.integer  "goal_integration_id"
+    t.boolean  "should_beemind",      default: false, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "goal_integrations", force: true do |t|
     t.integer  "user_id"

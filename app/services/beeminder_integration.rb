@@ -10,29 +10,12 @@ class BeeminderIntegration
       @unit = @goal_integration.unit.to_sym
     else
       @user = opts[:user]
-      @unit = opts[:unit] && opts[:unit].to_sym || self.class.known_units.keys.first
     end
     @client = beeminder_client if @user.beeminder_token.present?
   end
 
   def beeminder_client
     Beeminder::User.new(@user.beeminder_token)
-  end
-
-  def self.known_units
-    {
-      miles: 0.000621371192237334,
-      kilometers: 0.001,
-      feet: 3.2808333333
-    }
-  end
-
-  def distance(distance_in_m)
-    distance_in_m * (self.class.known_units[@unit])
-  end
-
-  def distance_round(distance_in_m)
-    distance(distance_in_m).round(1)
   end
 
   def get_goals
@@ -49,10 +32,9 @@ class BeeminderIntegration
     goal.first.slug
   end
 
-  def get_activity
+  def update_goal_integration_strava_activities
     raise StandardError, "Not instantiated with goal integration!" unless @goal_integration.present?
-    strava = StravaIntegration.new({goal_integration: @goal_integration})
-    strava.activities_for_goal_integration
+    StravaIntegration.new({goal_integration: @goal_integration}).update_goal_integration_strava_activities
   end
 
   def set_goal
@@ -66,13 +48,13 @@ class BeeminderIntegration
   end
 
   def post_new_activity_to_beeminder
-    activities = get_activity
+    goal_integration_strava_activities = update_goal_integration_strava_activities
     datapoints = get_goal_comments
-    activities.each do |activity|
-      posted = datapoints.select { |d| d.match(activity[:uri]) }
+    goal_integration_strava_activities.each do |gisa|
+      posted = datapoints.select { |d| d.match("#{gisa.strava_activity[:uri]}") }
       next if posted.present?
-      point = Beeminder::Datapoint.new(value: distance_round(activity[:distance_in_m]),
-        comment: activity.message)
+      point = Beeminder::Datapoint.new(value: gisa.distance_for_integration,
+        comment: gisa.strava_activity.message)
       @goal.add point
     end
   end

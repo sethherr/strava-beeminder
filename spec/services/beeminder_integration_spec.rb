@@ -11,7 +11,7 @@ describe BeeminderIntegration do
     end
   end
 
-  describe :goal_titles do 
+  describe :goal_titles do
     it "gets titles" do
       user = User.new(beeminder_token: ENV['BEEMINDER_ACCESS_TOKEN'] )
       integration = BeeminderIntegration.new(user: user)
@@ -20,13 +20,13 @@ describe BeeminderIntegration do
   end
 
 
-  describe :get_activity do 
+  describe :update_goal_integration_strava_activities do 
     it "gets strava activity" do
       user = create_user
       goal_integration = create_goal_integration(user)
       integration = BeeminderIntegration.new({goal_integration: goal_integration})
-      expect_any_instance_of(StravaIntegration).to receive(:activities_for_goal_integration)
-      integration.get_activity
+      expect_any_instance_of(StravaIntegration).to receive(:update_goal_integration_strava_activities)
+      integration.update_goal_integration_strava_activities
     end
   end
 
@@ -67,14 +67,6 @@ describe BeeminderIntegration do
       goal_integration = create_goal_integration(user)
       integration = BeeminderIntegration.new({goal_integration: goal_integration})
       expect(integration.post_new_activity_to_beeminder).to be_true
-    end
-  end
-
-  describe 'convert' do 
-    it "converts distance" do 
-      user = User.new
-      integration = BeeminderIntegration.new({user: user, unit: 'feet'})
-      expect(integration.distance(1)).to eq(3.2808333333)
     end
   end
 

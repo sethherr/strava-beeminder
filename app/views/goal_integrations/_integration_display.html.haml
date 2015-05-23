@@ -2,7 +2,6 @@
   = goal_integration.goal_title
   %small
     = goal_integration.activity_type
-- bee_int = BeeminderIntegration.new({goal_integration: goal_integration})
 %table.table.table-striped.table-bordered
   %thead
     %tr
@@ -15,13 +14,13 @@
       %th
         link
   %tbody
-    - current_user.strava_activities.matching_activity_type(goal_integration.activity_type).each do |activity|
+    - goal_integration.goal_integration_strava_activities.each do |gisa|
       %tr
         %td
-          = l activity.activity_time, format: :detailed
+          = l gisa.strava_activity.activity_time, format: :detailed
         %td
-          = activity.name
+          = gisa.strava_activity.name
         %td
-          = bee_int.distance_round(activity.data['distance'])
+          = gisa.distance_for_integration
         %td
-          = link_to activity[:id], "https://#{activity[:uri]}"
+          = link_to gisa.strava_activity.url.truncate(100), "https://#{gisa.strava_activity.url}"

@@ -1,12 +1,14 @@
 class StravaActivity < ActiveRecord::Base
   belongs_to :user
   validates_uniqueness_of :strava_id, scope: [:user_id]
+  has_many :goal_integration_strava_activities
+  has_many :goal_integrations, through: :goal_integration_strava_activities
 
   def self.create_or_update(u_id, api_data)
     s_id = strava_id_from(api_data)
-    activity = self.where(user_id: u_id, strava_id: s_id)
+    activity = self.where(user_id: u_id, strava_id: s_id).first
     if activity.present?
-      activity.update_attribute :data, api_data.to_json unless data == api_data.to_json
+      activity.update_attribute :data, api_data.to_json unless activity.data == api_data.to_json
     else
       self.create(user_id: u_id, strava_id: s_id, data: api_data.to_json)
     end
@@ -27,15 +29,26 @@ class StravaActivity < ActiveRecord::Base
     where("data ->> 'type' = ?", activity_type)
   end
 
-  def output_format
+  def self.known_units
     {
-      id: strava_id,
-      distance_in_m: data['distance'],
-      time: activity_time.to_i,
-      name: data['name'],
-      uri: url
+      miles: 0.000621371192237334,
+      kilometers: 0.001,
+      feet: 3.2808333333
     }
   end
+
+  def distance_in_m
+    data['distance']
+  end
+
+  def distance(u)
+    distance_in_m * (self.class.known_units[u.to_sym])
+  end
+
+  def distance_round(unit)
+    distance(unit).round(1)
+  end
+
 
   def name
     data['name']

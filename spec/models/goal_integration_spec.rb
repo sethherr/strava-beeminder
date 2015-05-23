@@ -3,6 +3,8 @@ require 'spec_helper'
 RSpec.describe GoalIntegration, type: :model do
   describe :validations do
     it { should belong_to :user }
+    it { should have_many :goal_integration_strava_activities }
+    it { should have_many :strava_activities }
   end
 
   describe :get_activity do 

@@ -36,9 +36,12 @@ class StravaIntegration
     @user.strava_activities.matching_activity_type(activity_type)
   end
 
-  def activities_for_goal_integration
+  def update_goal_integration_strava_activities
     raise StandardError, "Not instantiated with goal integration!" unless @goal_integration.present?
-    activities_matching(@goal_integration.activity_type)
+    activities_matching(@goal_integration.activity_type).
+      each { |a| GoalIntegrationStravaActivity.create_from(@goal_integration, a)}
+    @goal_integration.reload
+    @goal_integration.goal_integration_strava_activities
   end
 
 end
