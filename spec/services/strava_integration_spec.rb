@@ -48,7 +48,7 @@ describe StravaIntegration do
       integration.update_goal_integration_strava_activities
       goal_integration.reload
       expect(goal_integration.strava_activities.count).to be >= 2
-      expect(goal_integration.goal_integration_strava_activities.first.should_beemind).to be_true
+      expect(goal_integration.goal_integration_strava_activities.last.should_beemind).to be_true
     end
   end
 

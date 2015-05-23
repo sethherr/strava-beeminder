@@ -14,7 +14,7 @@ class StravaIntegration
       @user = opts[:user]      
     end
     @client = strava_client if @user.strava_token.present?
-    @after_i = @goal_integration && @goal_integration.created_at.to_i || (Time.now - 1.weeks).to_i
+    @after_i = @goal_integration && (@goal_integration.created_at - 2.weeks).to_i || (Time.now - 1.weeks).to_i
   end
 
   def strava_client 

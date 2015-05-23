@@ -22,4 +22,4 @@
 en:
   time:
     formats:
-      detailed: "%b %d %-I:%m%p"
+      detailed: "%b %d %-I:%m%P"

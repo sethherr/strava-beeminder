@@ -19,9 +19,10 @@ class StravaActivity < ActiveRecord::Base
     api_data['id'].to_s
   end
 
-  before_validation :set_strava_id
-  def set_strava_id
+  before_validation :set_strava_info
+  def set_strava_info
     self.strava_id ||= self.class.strava_id_from(data)
+    self.activity_time ||= Time.parse(data['start_date']) if data && data['start_date']
     true
   end
 
@@ -58,8 +59,8 @@ class StravaActivity < ActiveRecord::Base
     "strava.com/activities/#{strava_id}"
   end
 
-  def activity_time
-    Time.parse(data['start_date'])
+  def activity_time_local
+    Time.parse(data['start_date_local'])
   end
 
   def message 

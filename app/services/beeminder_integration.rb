@@ -1,6 +1,3 @@
-# Rake task in scheduler is run every hour. 
-# I made this too clever by half
-
 class BeeminderIntegration
   include ActionView::Helpers::TextHelper
   def initialize(opts={})

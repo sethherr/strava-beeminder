@@ -12,6 +12,9 @@
     %h4
       Setting up the integration
   .panel-body
+    - if @user
+      %h4
+        Hi #{@user.display_name}!
     - if @user && @user.goal_integrations.present?
       %h4
         You've successfully created a goal and an integration. You can obviously add more, but you're good to go right now.

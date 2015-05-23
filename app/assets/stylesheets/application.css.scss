@@ -21,5 +21,16 @@
   max-width: 15%;
   height: auto;
   float: left;
+}
 
+.pre-beeminder {
+  opacity: .6;
+  & > tbody > tr > td { padding-top: 4px; padding-bottom: 4px; }
+  margin-bottom: 0; 
+}
+
+.pre-beeminder-txt {
+  @extend .pre-beeminder;
+  margin-top: -10px;
+  margin-bottom: 5px;
 }

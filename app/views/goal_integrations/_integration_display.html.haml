@@ -1,26 +1,38 @@
-%h3
-  = goal_integration.goal_title
-  %small
-    = goal_integration.activity_type
-%table.table.table-striped.table-bordered
-  %thead
-    %tr
-      %th
-        When
-      %th
-        What
-      %th
-        Distance
-      %th
-        link
-  %tbody
-    - goal_integration.goal_integration_strava_activities.each do |gisa|
-      %tr
-        %td
-          = l gisa.strava_activity.activity_time, format: :detailed
-        %td
-          = gisa.strava_activity.name
-        %td
-          = gisa.distance_for_integration
-        %td
-          = link_to gisa.strava_activity.url.truncate(100), "https://#{gisa.strava_activity.url}"
+.panel.panel-default
+  .panel-heading
+    %h4
+      = goal_integration.goal_title
+      %small
+        = goal_integration.activity_type
+  .panel-body
+    %table.table.table-striped.table-bordered
+      %tbody
+        - goal_integration.goal_integration_strava_activities.for_beeminder.by_date.each do |gisa|
+          %tr
+            %td.col-xs-2
+              = l gisa.activity_time_local, format: :detailed
+            %td.col-xs-2
+              = gisa.distance_for_integration
+              %small
+                = goal_integration.unit
+            %td.col-xs-4
+              = gisa.name
+            %td.col-xs-4
+              = link_to gisa.url.truncate(100), "https://#{gisa.url}"
+    - if goal_integration.goal_integration_strava_activities.not_for_beeminder.present?
+      %p.pre-beeminder-txt
+        pre-integration (not added to beeminder)
+      %table.table.table-bordered.pre-beeminder
+        %tbody
+          - goal_integration.goal_integration_strava_activities.not_for_beeminder.by_date.each do |gisa|
+            %tr
+              %td.col-xs-2
+                = l gisa.activity_time_local, format: :detailed
+              %td.col-xs-2
+                = gisa.distance_for_integration
+                %small
+                  = goal_integration.unit
+              %td.col-xs-4
+                = gisa.name
+              %td.col-xs-4
+                = link_to gisa.url.truncate(100), "https://#{gisa.url}"

@@ -17,10 +17,10 @@ RSpec.describe StravaActivity, type: :model do
     end
   end
 
-  describe :seet_strava_id do 
+  describe :set_strava_id do 
     it "sets strava id" do 
-      strava_activity = StravaActivity.new(data: {id: 42}.to_json)
-      strava_activity.set_strava_id 
+      strava_activity = StravaActivity.new(data: {id: 42, start_data: Time.now.to_i}.to_json)
+      strava_activity.set_strava_info
       expect(strava_activity.strava_id).to eq('42')
     end
   end
