@@ -1,2 +1,1 @@
-web: bundle exec rails server -p $PORT
-worker: bundle exec sidekiq -c 5 -v -q checker
+custom_web: bundle exec unicorn -p $PORT -c ./config/unicorn.rb
