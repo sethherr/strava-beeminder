@@ -48,7 +48,12 @@ class BeeminderIntegration
     update_goal_integration_strava_activities
     datapoints = get_goal_comments
     @goal_integration.goal_integration_strava_activities.each do |gisa|
-      posted = datapoints.select { |d| d.match("#{gisa.strava_activity[:uri]}") }
+      posted = datapoints.select { |d| d.match("#{gisa.strava_activity.url}") }
+      if posted.present?
+        puts "#{gisa.strava_activity.url} IS POSTED" 
+      else
+        puts "#{gisa.strava_activity.url} not posted"
+      end
       next if posted.present?
       point = Beeminder::Datapoint.new(value: gisa.distance_for_integration,
         comment: gisa.strava_activity.message)
