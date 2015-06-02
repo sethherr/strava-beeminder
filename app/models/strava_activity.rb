@@ -4,6 +4,8 @@ class StravaActivity < ActiveRecord::Base
   has_many :goal_integration_strava_activities
   has_many :goal_integrations, through: :goal_integration_strava_activities
 
+  scope :by_date, -> { order(activity_time: :desc) }
+
   def self.create_or_update(u_id, api_data)
     s_id = strava_id_from(api_data)
     activity = self.where(user_id: u_id, strava_id: s_id).first

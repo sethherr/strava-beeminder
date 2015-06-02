@@ -25,7 +25,7 @@ describe StravaIntegration do
       integration.store_activities
       user.reload
       expect(user.strava_activities.count).to be >= 2
-      expect(user.strava_activities.first.data['type']).to match('Ride')
+      expect(user.strava_activities.first.data['type']).to match(/(run)|(ride)/i) # I only ride or run
     end
   end
 

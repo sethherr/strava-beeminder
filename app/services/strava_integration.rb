@@ -13,16 +13,24 @@ class StravaIntegration
     else
       @user = opts[:user]      
     end
-    @client = strava_client if @user.strava_token.present?
-    @after_i = @goal_integration && (@goal_integration.created_at - 2.weeks).to_i || (Time.now - 1.weeks).to_i
   end
 
-  def strava_client 
-    Strava::Api::V3::Client.new(:access_token => @user.strava_token)
+  def after_time
+    # Used to be based on the goal integration created date - but we don't need all that
+    # ... and we were getting rate limited. This now will work - so long as no-one does more than
+    # 200 requests in the last two weeks.
+    (Time.now - 1.weeks).to_i
   end
 
   def get_activities
-    @client.list_athlete_activities(after: @after_i)
+    opts = {
+      access_token: @user.strava_token,
+      after: after_time,
+      per_page: 200
+    }
+    response = HTTParty.get("https://www.strava.com/api/v3/athlete/activities", query: opts,
+      :headers => { 'Content-Type' => 'application/json' } )
+    JSON.parse(response.body)
   end
 
   def store_activities
