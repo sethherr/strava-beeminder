@@ -18,6 +18,7 @@ class StravaActivity < ActiveRecord::Base
 
   def self.strava_id_from(api_data=nil)
     return nil unless api_data.present?
+    puts api_data
     api_data['id'].to_s
   end
 
