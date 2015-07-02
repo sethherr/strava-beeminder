@@ -24,7 +24,7 @@
   .form-group
     %label
       Select unit
-    = f.select :unit, options_for_select(BeeminderIntegration.known_units.keys.map{ |a| [a, a]}), {}, class: 'form-control'
+    = f.select :unit, options_for_select(StravaActivity.known_units.keys.map{ |a| [a, a]}), {}, class: 'form-control'
 
   .actions
     = f.submit class: 'btn btn-primary'
